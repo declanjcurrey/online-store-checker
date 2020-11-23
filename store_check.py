@@ -37,6 +37,7 @@ session = requests.session()
 session.headers.update(headers)
 
 thread_list = []
+lock = Semaphore(value=1)
 
 
 def strip_url(url):
@@ -67,7 +68,7 @@ def handle_200_response(browser, store, page):
         browser.open(store['url'])
     else:
         while status_code == 200 and not any(x in page for x in store['element_ids']):
-            print("Site: {} is up but no add-to-basket element exists... trying again...".format(strip_url(store['url'])))
+            print("Site: {0} - {1} is up but no add-to-basket element exists... trying again...".format(strip_url(store['url']), store['name']))
             status_code, page = make_page_request(store['url'])
 
             if any(x in page for x in store['element_ids']):
@@ -127,4 +128,6 @@ if __name__ == "__main__":
         thread.join()
 
     print("Script complete.")
+
+
 
