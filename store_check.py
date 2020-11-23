@@ -37,7 +37,6 @@ session = requests.session()
 session.headers.update(headers)
 
 thread_list = []
-lock = Semaphore(value=1)
 
 
 def strip_url(url):
