@@ -62,7 +62,7 @@ def make_page_request(url):
 
 def handle_200_response(browser, store, page):
     status_code = 200
-
+    retries = 0
     if any(x in page for x in store['element_ids']):
         print("{0} - {1} is up!! And product can be purchased!!! Good Luck!!".format(strip_url(store['url']), store['name']), flush=True)
         browser.open(store['url'])
@@ -70,6 +70,13 @@ def handle_200_response(browser, store, page):
         while status_code == 200 and not any(x in page for x in store['element_ids']):
             print("Site: {0} - {1} is up but no add-to-basket element exists... trying again...".format(strip_url(store['url']), store['name']))
             status_code, page = make_page_request(store['url'])
+
+            if retries == MAX_RETRIES:
+                print("Maximum retries attempted for {}. Closing thread... ".format(strip_url(store['url'])))
+                break
+
+            if status_code == 503:
+                handle_503_response(browser, status_code, store)
 
             if any(x in page for x in store['element_ids']):
                 print("Add to basket element exists, opening up chrome! Good luck!")
@@ -128,6 +135,3 @@ if __name__ == "__main__":
         thread.join()
 
     print("Script complete.")
-
-
-
