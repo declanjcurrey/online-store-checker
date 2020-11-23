@@ -71,6 +71,7 @@ def handle_200_response(browser, store, page):
             print("Site: {0} - {1} is up but no add-to-basket element exists... trying again...".format(strip_url(store['url']), store['name']))
             status_code, page = make_page_request(store['url'])
 
+            retries += 1
             if retries == MAX_RETRIES:
                 print("Maximum retries attempted for {}. Closing thread... ".format(strip_url(store['url'])))
                 break
